@@ -1,10 +1,8 @@
 const data = [
-    { title: "Nadpis 1", description: "Toto je odstavec prvního řádku komponenty accordionToto je odstavec prvního řádku komponenty accordionToto je odstavec prvního řádku komponenty accordionToto je odstavec prvního řádku komponenty accordionToto je odstavec prvního řádku komponenty accordionToto je odstavec prvního řádku komponenty accordionToto je odstavec prvního řádku komponenty accordion" },
+    { title: "Nadpis 1", description: "Toto je odstavec prvního řádku komponenty accordion" },
     { title: "Nadpis 2", description: "Toto je odstavec druhého řádku komponenty accordion" },
     { title: "Nadpis 3", description: "Toto je odstavec třetího řádku komponenty accordion" }
 ];
-
-document.body.style = "height: 100vh;"
 
 const sectionStyle = `
     text-align: center;
@@ -19,16 +17,20 @@ const accordionElementStyle = `
     
 `;
 const accordionElementTitleStyle = `
-    background-color: salmon;
+    background-color: rgb(250, 128, 114);
     margin: 0;
     padding: 1rem 2rem;
     box-sizing: border-box;
 `;
 const accordionElementBodyStyle = `
-    height: 0px;    
+    width: 100%;
+    max-height: 0;    
     overflow: hidden;
     margin: 0;
+    padding: 0;
     background: lightgrey;
+    transition: all 250ms;
+    box-sizing: border-box;
 `;
 
 const createAccordion = (data) => {
@@ -61,14 +63,36 @@ const createAccordionElement = (accordionData) => {
     accordionElementBody.style = accordionElementBodyStyle;
 
     accordionElementTitle.innerText = accordionData.title;
-    accordionElementTitle.addEventListener("mouseover", () => accordionElementTitle.style.cursor = "pointer");
-    accordionElementTitle.addEventListener("click", () => {
-        if (accordionElementBody.style.height == "auto") {
-            accordionElementBody.style.transition = "height 250ms"
-            accordionElementBody.style.height = "0px";
+
+    accordionElementTitle.addEventListener("mouseenter", () => {
+        accordionElementTitle.style.cursor = "pointer";
+        accordionElementTitle.style.backgroundColor = "rgb(250, 100, 90)";
+    });
+    accordionElementTitle.addEventListener("mouseleave", (e) => {
+        if(e.target.nextSibling.classList.contains("active")) return
+        accordionElementTitle.style.cursor = "pointer";
+        accordionElementTitle.style.backgroundColor = "rgb(250, 128, 114)";
+    })
+    accordionElementTitle.addEventListener("click", (e) => {
+        document.querySelectorAll(".active").forEach(activeElement => {
+            if(activeElement == e.target.nextSibling) return
+
+            activeElement.style.maxHeight = "0"
+            activeElement.style.padding = "0";
+            activeElement.previousSibling.style.backgroundColor = "rgb(250, 128, 114)";
+            activeElement.classList.remove("active")
+        })
+        if (accordionElementBody.classList.contains("active")) {
+            accordionElementBody.classList.remove("active");
+            accordionElementBody.style.maxHeight = "0";
+            accordionElementBody.style.padding = "0";
+            accordionElementTitle.style.backgroundColor = "rgb(250, 128, 114)";
             
         } else {
-            accordionElementBody.style.height = "auto";
+            accordionElementBody.classList.add("active");
+            accordionElementBody.style.maxHeight = "10rem";
+            accordionElementBody.style.padding = "1rem 2rem";
+            accordionElementTitle.style.backgroundColor = "rgb(250, 100, 90)";
         }
     })
     
